@@ -1,0 +1,92 @@
+{
+ "project": "archive-search-workbench",
+ "versie": "1.0",
+ "datum": "2026-05-24",
+ "begrippen": [
+ {
+ "term": "Archive Label",
+ "definitie": "Uniek identificatielabel voor een fysiek opslagmedium (bijv. ARCHIVE-DISK-001). Wordt op een sticker op het medium geplakt en als directory-naam gebruikt.",
+ "status": "stabiel"
+ },
+ {
+ "term": "Stickerlabel",
+ "definitie": "Fysieke sticker met het archive label, geplakt op het externe medium zodat het later herkend kan worden zonder aan te sluiten.",
+ "status": "stabiel"
+ },
+ {
+ "term": "Read-only mount",
+ "definitie": "Het aankoppelen van een extern medium aan het besturingssysteem waarbij schrijven onmogelijk is. Garandeert dat originele data ongewijzigd blijft.",
+ "status": "stabiel"
+ },
+ {
+ "term": "Metadata scan",
+ "definitie": "Het recursief doorlopen van een medium en registreren van bestandseigenschappen (naam, grootte, datums, documentmetadata) in de SQLite catalogus.",
+ "status": "stabiel"
+ },
+ {
+ "term": "Original content date",
+ "definitie": "De best beschikbare schatting van wanneer de inhoud van een bestand oorspronkelijk is gemaakt, bepaald via een prioriteitensysteem (EXIF > document metadata > bestandsnaam > filesystem).",
+ "status": "stabiel"
+ },
+ {
+ "term": "Date confidence",
+ "definitie": "Betrouwbaarheidsindicator voor original_content_date: high (document metadata), medium (bestandsnaam), low (filesystem), suspect (onbetrouwbaar).",
+ "status": "stabiel"
+ },
+ {
+ "term": "Extension group",
+ "definitie": "Categorisering van bestandsextensies in functionele groepen: documenten, spreadsheets, databases, afbeeldingen, archieven, code_kennis.",
+ "status": "stabiel"
+ },
+ {
+ "term": "Availability status",
+ "definitie": "Of een bestand nu toegankelijk is: online (medium aangesloten), indexed_only (alleen metadata bekend), archive_offline (medium niet aangesloten), missing (verwacht maar niet gevonden).",
+ "status": "stabiel"
+ },
+ {
+ "term": "Scan checkpoint",
+ "definitie": "Tussentijdse opslag van scanvoortgang per directory, zodat een onderbroken scan later hervat kan worden.",
+ "status": "voorlopig"
+ },
+ {
+ "term": "Recoll index",
+ "definitie": "Full-text zoekindex gebouwd door Recoll, per medium apart opgeslagen. Maakt zoeken in documentinhoud mogelijk zonder het medium aangesloten te hebben.",
+ "status": "stabiel"
+ },
+ {
+ "term": "PINGS",
+ "definitie": "Disk image backups gemaakt met het programma PING (Partimage Is Not Ghost). Gesplitst in .000/.001/.002 bestanden.",
+ "status": "voorlopig"
+ },
+ {
+ "term": "Ingest",
+ "definitie": "Het proces van een nieuw medium aansluiten, registreren, scannen en indexeren. Het medium wordt 'ingested' in de werkbank.",
+ "status": "stabiel"
+ },
+ {
+ "term": "Netwerk-USB (USB/IP)",
+ "definitie": "Techniek om de USB-poort van een andere machine over het netwerk (TCP-poort 3240) door te geven aan de server, zodat een daar aangesloten schijf op de server als lokale /dev/sdX verschijnt en normaal geindexeerd kan worden.",
+ "status": "nieuw"
+ },
+ {
+ "term": "Exporter",
+ "definitie": "De machine waar de schijf fysiek aan hangt en die hem via usbipd deelt (bind). Windows: usbipd-win; Linux: usbip/usbipd.",
+ "status": "nieuw"
+ },
+ {
+ "term": "Importer",
+ "definitie": "De machine die een gedeelde USB-schijf over het netwerk aankoppelt (usbip attach). Hier altijd de server (), die de vhci-hcd kernelmodule gebruikt.",
+ "status": "nieuw"
+ },
+ {
+ "term": "busid",
+ "definitie": "USB-bus-identificatie (bijv. 1-4 of 2-4) die een specifiek apparaat op een host aanduidt; gebruikt bij usbip bind/attach.",
+ "status": "nieuw"
+ },
+ {
+ "term": "vhci-hcd",
+ "definitie": "Virtuele USB host-controller kernelmodule aan de importer-zijde; laat over USB/IP aangekoppelde apparaten als echte USB-devices verschijnen.",
+ "status": "nieuw"
+ }
+ ]
+}

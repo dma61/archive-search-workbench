@@ -1,0 +1,87 @@
+# Archive Search Workbench — Configuratie
+# Versie: 1.0
+
+scan_roots:
+  - /mnt/archive-ingest
+
+output_dir: ./output
+sqlite_db: ./data/archive_catalog.db
+recoll_index_base: ./recoll-indexes
+read_only_required: true
+cautious_mode: true
+max_file_size_for_text_index_mb: 500
+max_archive_recursion_depth: 3
+temporary_extract_dir: ./temp
+filename_encoding_fallback:
+  - utf-8
+  - cp1252
+  - latin-1
+follow_symlinks: false
+scan_checkpoint_enabled: true
+lock_file: ./data/workbench.lock
+
+include_extensions:
+  documenten:
+    - pdf
+    - doc
+    - docx
+    - odt
+    - rtf
+    - txt
+  spreadsheets:
+    - xls
+    - xlsx
+    - xlsm
+    - csv
+  databases:
+    - mdb
+    - accdb
+    - sqlite
+    - db
+    - dbf
+    - sql
+  afbeeldingen:
+    - jpg
+    - jpeg
+    - png
+    - gif
+    - tiff
+    - bmp
+    - heic
+    - webp
+  archieven:
+    - zip
+    - rar
+    - 7z
+    - tar
+    - gz
+  code_kennis:
+    - md
+    - yaml
+    - yml
+    - json
+    - xml
+    - puml
+    - py
+    - ps1
+    - sh
+    - sql
+    - html
+    - css
+    - js
+
+exclude_dirs:
+  - "$RECYCLE.BIN"
+  - System Volume Information
+  - node_modules
+  - .git
+  - AppData
+  - Windows
+  - Program Files
+  - Program Files (x86)
+  - RECYCLER
+
+archive_safety:
+  max_uncompressed_size_mb: 2000
+  max_files_in_archive: 10000
+  max_path_depth: 50

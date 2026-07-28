@@ -1,0 +1,32 @@
+# === Runtime data & gegenereerde output (nooit in git) ===
+data/
+# Netwerk-USB (USB/IP) runtime-state — hoort niet in git
+data/remote_usbip_state.json
+recoll-indexes/
+logs/
+output/
+temp/
+*.db
+archive.db
+
+# === Python ===
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# === Backups (vervangen door git-historie) ===
+*.bak
+*.bak-*
+*.bak_*
+
+# === Agent / editor lokale config ===
+.claude/
+
+# === OS / editor ===
+.DS_Store
+Thumbs.db
+*.swp
+
+# Per-deployment host-config (lokaal; gebruik config/remote_hosts.example.yaml als sjabloon)
+config/remote_hosts.yaml

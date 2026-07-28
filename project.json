@@ -1,0 +1,9 @@
+{
+  "$type": "dev-manifest",
+  "projectId": "indexer-exhdd-asw",
+  "name": "Archive Search Workbench Indexer",
+  "description": "Externe HDD indexer voor Archive Search Workbench — scant oude media naar SQLite",
+  "status": "production",
+  "cluster": "Data",
+  "icon": "🗃️"
+}

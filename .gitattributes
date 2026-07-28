@@ -1,0 +1,14 @@
+# Forceer LF voor alle tekstbestanden — project draait op Linux (de server).
+# Voorkomt dat Windows-checkout CRLF introduceert en shell-scripts breekt.
+* text=auto eol=lf
+
+*.sh   text eol=lf
+*.py   text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.puml text eol=lf
+
+# Binaire bestanden ongemoeid laten
+*.svg  binary
+*.png  binary

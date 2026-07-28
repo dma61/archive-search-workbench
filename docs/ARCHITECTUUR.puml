@@ -1,0 +1,92 @@
+@startuml
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+package "Ontwikkelomgeving\n(ontwikkelmachine, Windows)" {
+ rectangle "Broncode\nweb_app.py" as src
+ rectangle "Deploy\nscp + ssh restart" as deploy
+ rectangle "NAS Git Remote\n() — WIP backup" as git
+}
+
+package "Doelomgeving\n(de indexeer-server, , Ubuntu 24.04)" as live {
+ rectangle "OS-basis\nPython venv\nntfs-3g\nRecoll\nsystemd" as osbase
+
+ rectangle "App runtime\narchive-search-workbench.service\nFlask — poort 5059\n(mono-file, embedded HTML/CSS/JS)" as appruntime
+
+ database "SQLite\narchive_catalog.db\n(WAL-modus)" as db
+
+ folder "Recoll index\n~/.recoll/\n(full-text engine)" as recoll_idx
+
+ folder "Persistente config\n.codex/contracts/\ndonate-routes.v1.json" as config
+
+ folder "Logboek\nlogs/check_*.log" as logs
+}
+
+package "Archief-media\n(USB HDD / Stick / SD-kaart)" as media {
+ rectangle "ARCHIVE-DISK-001 t/m 005\n(read-only — /mnt/archive-ingest/)" as disks
+}
+
+rectangle "Browser\n(gebruiker, LAN)" as browser
+rectangle "Stripe\n(donate, extern)" as stripe
+
+' Deployment workflow
+src --> deploy
+deploy --> appruntime : scp web_app.py\n+ systemctl restart
+src --> git : git push (WIP)
+
+' Runtime structuur
+osbase --> appruntime
+appruntime --> db : lees / schrijf metadata
+appruntime --> recoll_idx : full-text zoeken
+appruntime --> config : leest donate-route
+appruntime --> logs : schrijft check-logs
+
+' Scan workflow (media aankoppelen)
+disks --> appruntime : RO-mount (ntfs-3g)\nautomatisch bij check-start
+
+' Gebruikersinteractie
+browser --> appruntime : HTTP :5059\n(zoeken, beheer, SQL)
+appruntime --> browser : HTML / JSON
+
+' Extern
+browser --> stripe : donate-klik (nieuwe tab)
+
+note bottom of osbase
+Installatievereisten (footprint):
+- Python 3.x + virtualenv
+- recoll (full-text index engine)
+- ntfs-3g (NTFS RO-mount + uid/gid)
+- systemd service ingeschakeld
+- sudo-rechten voor mount/umount
+end note
+
+note right of disks
+Read-only is heilig:
+mount -o ro,uid=... via ntfs-3g
+Sticker op medium = UUID-koppeling in DB
+SMART via USB bridge niet beschikbaar
+Auto-mount bij check-start (confirm-dialog)
+end note
+
+note right of db
+2.151.296 bestanden | 5 media | 18 scans
+Tabellen: files, physical_media, scans
+Pad-migratie via /api/admin/migrate-paths
+end note
+
+note bottom of appruntime
+Mono-file Flask app (geen extra dependencies)
+i18n: nl / en via JS I18N-dict + t()-functie
+Donate: contract-first via donate-routes.v1.json
+Check-resultaat: SQL-knop opent SQL-tab
+end note
+
+note right of config
+donate-routes.v1.json contract v1
+provider: Stripe
+button_label: '' (i18n-driven: Doneer / Donate)
+Locatie: PROJECT_DIR/.codex/contracts/
+end note
+
+@enduml

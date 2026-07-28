@@ -1,0 +1,18 @@
+{
+  "contract_name": "donate.routes.public",
+  "contract_version": 1,
+  "generated_at": "2026-05-28T12:00:00+00:00",
+  "routes_count": 1,
+  "routes": [
+    {
+      "route_id": "stripe-primary",
+      "provider_id": "stripe",
+      "provider_name": "Stripe",
+      "route_kind": "link",
+      "title": "Donate",
+      "public_url": "https://donate.stripe.com/8x26oG1E0fwa12h5Ht6Na00?locale=en",
+      "button_label": "",
+      "is_primary": true
+    }
+  ]
+}

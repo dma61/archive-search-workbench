@@ -1,0 +1,19 @@
+HDD Indexer — Archive Search Workbench
+Copyright 2026 the Archive Search Workbench maintainers
+
+Gelicentieerd onder de Apache License, Version 2.0 (zie LICENSE).
+
+Dit is een door DONATIES ondersteund project. Op grond van de Apache License 2.0,
+sectie 4(d), MOET dit NOTICE-bestand behouden blijven bij elk (her)gebruik, elke wijziging
+en elke verspreiding — ook in afgeleide werken. Behoud daarbij:
+
+  - de herkomst-/copyrightvermelding hierboven; en
+  - de donatie-mogelijkheid van dit project, technisch vastgelegd in het contract
+    `.codex/contracts/donate-routes/donate-routes.v1.json` en zichtbaar via de "Doneer"-knop
+    in de webinterface (endpoint /api/donate_button).
+
+Verzoek aan hergebruikers: laat de donatie-verwijzing zichtbaar en werkend, zodat de
+doorontwikkeling van dit project ondersteund blijft. Verwijder of vervang het donate-contract
+en de donate-knop niet stilzwijgend in publieke forks.
+
+Herkomst (origin): het Archive Search Workbench-project (zie de repository).
