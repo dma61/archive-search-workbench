@@ -5,18 +5,25 @@
 Deze gids brengt je van een schone machine naar een draaiende workbench: de Flask-webinterface
 op poort `5059`, met een lokale SQLite-catalogus en een Recoll full-text index.
 
-> De **serverkant draait op Linux** (getest op Ubuntu 22.04/24.04). Windows en andere
-> Linux-machines kunnen fungeren als **netwerk-USB-exporters** — zie [Netwerk-USB](#optioneel-netwerk-usb-usbip).
+> De **app-host moet Linux zijn** (Ubuntu 22.04/24.04 is getest; andere distro's werken ook).
+> Windows en andere machines kunnen fungeren als **netwerk-USB-exporters** — zie
+> [Netwerk-USB](#optioneel-netwerk-usb-usbip).
 
 ---
 
 ## 1. Vereisten
 
-- **OS:** Ubuntu 22.04+ / 24.04 (of een Debian-gebaseerde distro met `apt`).
+- **Een Linux-host.** De app stuurt native Linux-tools aan (`mount` + ntfs-3g voor read-only
+  koppelen, Recoll voor indexeren, `usbip` voor netwerk-USB, `/dev/sdX`, `/mnt`). Windows en
+  macOS kunnen alleen netwerk-USB-**exporter** (client) zijn, niet de app-host.
+- **Debian/Ubuntu is aanbevolen, niet verplicht.** `setup.sh` installeert pakketten via `apt`,
+  en Ubuntu 22.04/24.04 is de geteste route — op Debian/Ubuntu is de setup dus één commando.
+  Op andere distro's (Fedora, Arch, …) werkt de app net zo goed; installeer de equivalente
+  pakketten handmatig (zie de pakketlijst in stap 3) in plaats van `setup.sh` te draaien.
 - **Python:** 3.10 of nieuwer.
 - **Rechten:** een gebruiker met `sudo`-rechten (nodig om externe media te (un)mounten en om
   `/mnt/archive-ingest` aan te maken).
-- **Netwerk:** internettoegang bij de eerste installatie (apt + pip).
+- **Netwerk:** internettoegang bij de eerste installatie (pakketten + pip).
 
 ## 2. Code ophalen
 

@@ -114,7 +114,9 @@ machine on your network; the server then imports it as a local disk and indexes 
 
 ## Requirements
 
-- Ubuntu 22.04+ / 24.04 (Linux server side)
+- **A Linux host** for the app (it drives native Linux tools: mount/ntfs-3g, Recoll, usbip).
+  Debian/Ubuntu is recommended and tested — `setup.sh` uses `apt`; other distros work too
+  with the packages installed by hand. Windows/macOS can only be network-USB *exporters*.
 - Python 3.10+
 - sudo rights for mount/unmount
 - Recoll, ripgrep, exiftool, p7zip, unrar (installed by `setup.sh`)

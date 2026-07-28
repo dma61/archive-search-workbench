@@ -113,7 +113,9 @@ indexeert hem normaal.
 
 ## Vereisten
 
-- Ubuntu 22.04+ / 24.04 (Linux, serverzijde)
+- **Een Linux-host** voor de app (die stuurt native Linux-tools aan: mount/ntfs-3g, Recoll, usbip).
+  Debian/Ubuntu is aanbevolen en getest — `setup.sh` gebruikt `apt`; andere distro's werken ook
+  met handmatig geïnstalleerde pakketten. Windows/macOS kunnen alleen netwerk-USB-*exporter* zijn.
 - Python 3.10+
 - sudo-rechten voor mount/unmount
 - Recoll, ripgrep, exiftool, p7zip, unrar (geïnstalleerd via `setup.sh`)

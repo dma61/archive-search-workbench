@@ -5,18 +5,25 @@
 This guide gets you from a clean machine to a running workbench: the Flask web interface
 on port `5059`, backed by a local SQLite catalog and Recoll full-text index.
 
-> The **server side runs on Linux** (Ubuntu 22.04/24.04 tested). Windows and other Linux
-> machines can act as **network-USB exporters** — see [Network-USB](#optional-network-usb-usbip).
+> The **app host must be Linux** (Ubuntu 22.04/24.04 is tested; other distros work too).
+> Windows and other machines can act as **network-USB exporters** — see
+> [Network-USB](#optional-network-usb-usbip).
 
 ---
 
-## 1. Prerequisites
+## 1. Requirements
 
-- **OS:** Ubuntu 22.04+ / 24.04 (or a Debian-based distro with `apt`).
+- **A Linux host.** The app drives native Linux tools (`mount` + ntfs-3g for read-only
+  mounts, Recoll for indexing, `usbip` for network-USB, `/dev/sdX`, `/mnt`). Windows and
+  macOS can only act as network-USB **exporters** (clients), not as the app host.
+- **Debian/Ubuntu is recommended, not required.** `setup.sh` installs packages with `apt`,
+  and Ubuntu 22.04/24.04 is the tested path — so on Debian/Ubuntu setup is a single command.
+  On other distros (Fedora, Arch, …) the app works just as well; install the equivalent
+  packages by hand (see the package list in step 3) instead of running `setup.sh`.
 - **Python:** 3.10 or newer.
 - **Privileges:** a user with `sudo` rights (needed to mount/unmount external media and to
   create `/mnt/archive-ingest`).
-- **Network:** internet access for the first install (apt + pip).
+- **Network:** internet access for the first install (packages + pip).
 
 ## 2. Get the code
 
