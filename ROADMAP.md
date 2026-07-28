@@ -32,7 +32,7 @@
 - [x] App-endpoints `/api/remote/*` + "Netwerk-USB"-paneel in Beheer
 - [x] Eject koppelt automatisch los (`usbip detach`)
 - [x] Exporter-setup Windows (usbipd-win) en Linux (usbip/usbipd) + docs
-- [ ] Apart de server→NAS kanaal (DSM mist usbip-modules) — zie `docs/MANTIS-NAS-USBIP-KANAAL.md`
+- [ ] Apart de server→NAS kanaal (DSM mist usbip-modules)
 - [ ] Optioneel: USB/IP over Tailscale/SSH-tunnel voor buiten-LAN gebruik
 
 ## Fase 4: Webinterface
@@ -51,7 +51,7 @@
 - [ ] Tijdlijn-visualisatie van documenten
 
 ## Fase 6: Integratie
-- [ ] de server→NAS Netwerk-USB kanaal (apart kanaal) — zie `docs/MANTIS-NAS-USBIP-KANAAL.md`
+- [ ] de server→NAS Netwerk-USB kanaal (apart kanaal)
 - [ ] NAS-export (catalogus syncen naar Synology)
 - [ ] Obsidian-integratie (zoekresultaten als markdown notes)
 - [ ] YAML export voor kennisbank

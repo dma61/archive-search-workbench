@@ -18,7 +18,7 @@ De server is de importer; de machine waar de schijf hangt is de exporter.
  state `data/remote_usbip_state.json`, en "Netwerk-USB"-paneel in Beheer (met i18n nl/en)
 - [x] Eject-integratie: `_maybe_detach_remote` in `api_eject` → `usbip detach` bij uitwerpen
 - [x] Exporter-setup + docs: Windows (`usbipd-win`) en Linux (`usbip`/`usbipd`), `network-usb/README.md`
-- [x] Mantis-bevinding voor toekomstig de server→NAS kanaal (`docs/MANTIS-NAS-USBIP-KANAAL.md`)
+- [x] Ontwerpnotitie voor toekomstig de server→NAS kanaal
 
 ### Ontwerpbeslissingen
 - **Importer = de server**: heeft al usbip-tools + `vhci-hcd`-module + sudo NOPASSWD

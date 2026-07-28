@@ -1,101 +1,103 @@
-# Netwerk-USB (USB/IP) — schijf op een andere machine indexeren
+# Network-USB (USB/IP) — index a drive on another machine
 
-Met dit onderdeel kun je een archiefschijf aan **elke machine in je netwerk** hangen
-en hem toch via de Archive Search Workbench op de server (`<server-ip>`) uitlezen
-én indexeren. De USB-poort van die machine wordt als het ware een poort van de server.
+This component lets you attach an archive drive to **any machine on your network** and still
+read and index it through the Archive Search Workbench running on the app host. The USB port
+of that other machine effectively becomes a port of the app host.
 
-## Hoe het werkt
+## How it works
 
 ```
- Schijf hangt hier Server (brein)
- ┌─────────────────────┐ USB/IP over ┌────────────────────────┐
- │ Exporter-machine │ TCP poort 3240 │ de server (importer)│
- │ usbipd → bind │ ───────────────► │ usbip attach → /dev/sdX│
- │ (Windows of Linux) │ │ → read-only mount →scan│
- └─────────────────────┘ └────────────────────────┘
+ Drive is plugged in here            App host (the brain)
+ ┌─────────────────────┐  USB/IP over  ┌────────────────────────┐
+ │ Exporter machine    │  TCP port 3240│ App host (importer)    │
+ │ usbipd -> bind      │ ────────────► │ usbip attach -> /dev/sdX│
+ │ (Windows or Linux)  │               │ -> read-only mount->scan│
+ └─────────────────────┘               └────────────────────────┘
 ```
 
-- **Exporter** = de machine waar de schijf fysiek aan hangt. Die "bindt" de USB-schijf.
-- **Importer** = de server. Die "attacht" de schijf; hij verschijnt daar als een echte
- lokale `/dev/sdX`, waardoor de bestaande read-only mount / scan / index-pijplijn
- ongewijzigd werkt.
+- **Exporter** = the machine the drive is physically plugged into. It "binds" the USB drive.
+- **Importer** = the app host. It "attaches" the drive; it appears there as a real local
+  `/dev/sdX`, so the existing read-only mount / scan / index pipeline works unchanged.
 
-De server is al voorbereid (usbip-tools + `vhci-hcd`-module aanwezig). Je hoeft alleen
-de **exporter-machine** in te richten.
+The app host is already prepared (usbip tools + the `vhci-hcd` module). You only need to set
+up the **exporter machine**.
 
-## Stap 1 — Exporter inrichten (eenmalig per machine)
-
-### Windows (Desktop , ws-5)
-Draai in **PowerShell als Administrator**, in deze map:
-
-```powershell
-.\windows\install-usbipd.ps1 # installeert usbipd-win (opent ook firewall 3240)
-```
-
-### Linux (bv. <andere-machine>)
-```bash
-./linux/setup-exporter.sh # installeert usbip, laadt modules, start usbipd
-```
-
-## Stap 2 — Schijf delen (elke keer dat je een schijf wilt indexeren)
-
-Sluit de schijf aan op de exporter-machine en zoek de **busid**:
+## Step 1 — Set up the exporter (once per machine)
 
 ### Windows
+Run in **PowerShell as Administrator**, from this directory:
+
 ```powershell
-.\windows\export-disk.ps1 -List # toon apparaten + busid
-.\windows\export-disk.ps1 -BusId 2-4 # deel de schijf (Administrator)
+.\windows\install-usbipd.ps1   # installs usbipd-win (also opens firewall port 3240)
 ```
 
 ### Linux
 ```bash
-./linux/bind-disk.sh # toon apparaten + busid
-./linux/bind-disk.sh 1-4 # deel de schijf
+./linux/setup-exporter.sh      # installs usbip, loads modules, starts usbipd
 ```
 
-## Stap 3 — Koppelen vanaf de server
+## Step 2 — Share a drive (each time you want to index one)
 
-Open de workbench: <http://<server-ip>:5059/> → tab **Beheer** →
-paneel **"Netwerk-USB — schijf op andere machine"**:
+Plug the drive into the exporter machine and find its **busid**:
 
-1. Kies de machine (🟢 = bereikbaar op poort 3240).
-2. Klik **Toon schijven op deze machine**.
-3. Klik bij de juiste schijf op **Koppel aan server**.
-4. De schijf verschijnt daarna bij **Aangesloten schijven** — label/mount/scan zoals normaal.
+### Windows
+```powershell
+.\windows\export-disk.ps1 -List          # list devices + busid
+.\windows\export-disk.ps1 -BusId 2-4     # share the drive (Administrator)
+```
 
-## Stap 4 — Loskoppelen
+### Linux
+```bash
+./linux/bind-disk.sh                      # list devices + busid
+./linux/bind-disk.sh 1-4                  # share the drive
+```
 
-Werp de schijf uit via de normale **Uitwerpen**-knop bij de schijfkaart: dat unmount de
-schijf én verbreekt automatisch de netwerk-koppeling (`usbip detach`). Je kunt een koppeling
-ook handmatig verbreken in het Netwerk-USB-paneel onder **Actieve netwerk-koppelingen**.
-Op de exporter-machine geef je de schijf weer vrij met `export-disk.ps1 -Unbind` (Windows)
-of `bind-disk.sh --unbind` (Linux).
+## Step 3 — Attach from the app host
 
-## Beveiliging (belangrijk)
+Open the workbench: `http://<app-host>:5059/` → **Manage** tab →
+the **"Network-USB — drive on another machine"** panel:
 
-- **USB/IP verkeer op poort 3240 is onversleuteld en ongeauthenticeerd.** Gebruik dit
- alleen op een **vertrouwd LAN**. Beperk firewall-poort 3240 tot het IP van de server
- (`<server-ip>`).
-- Wil je een schijf van **buiten het LAN** doorgeven? Tunnel USB/IP dan over **Tailscale**
- of een **SSH-tunnel** in plaats van poort 3240 direct open te zetten.
-- **Read-only blijft gegarandeerd:** de server mount de schijf altijd read-only
- (`mount_readonly.sh`, met schrijfbeveiliging-verificatie), ook al zit het block-device
- fysiek op een andere machine.
-- Zolang een schijf gedeeld (bound) is, is hij **niet** als gewone schijf op de
- exporter-machine beschikbaar. Voor read-only archiefschijven is dat prima.
+1. Pick the machine (🟢 = reachable on port 3240).
+2. Click **Show drives on this machine**.
+3. Click **Attach to host** on the right drive.
+4. The drive then appears under **Connected disks** — label/mount/scan as usual.
 
-## NAS
+> Tip: for a copy-paste onboarding of a brand-new exporter machine, see
+> [`../docs/ONBOARDING-NEW-MACHINE.md`](../docs/ONBOARDING-NEW-MACHINE.md).
 
-De Synology NAS (``) valt nu buiten scope: DSM mist standaard de usbip-kernelmodules.
-Zie [`../docs/MANTIS-NAS-USBIP-KANAAL.md`](../docs/MANTIS-NAS-USBIP-KANAAL.md) voor het
-plan voor een apart NAS-kanaal.
+## Step 4 — Detach
 
-## Bestanden
+Eject the drive with the normal **Eject** button on the disk card: that unmounts the drive
+**and** automatically breaks the network attachment (`usbip detach`). You can also detach
+manually in the Network-USB panel under **Active network attachments**. On the exporter
+machine, release the drive again with `export-disk.ps1 -Unbind` (Windows) or
+`bind-disk.sh --unbind` (Linux).
 
-| Bestand | Rol |
+## Security (important)
+
+- **USB/IP traffic on port 3240 is unencrypted and unauthenticated.** Use it only on a
+  **trusted LAN**. Restrict firewall port 3240 to the app host's IP.
+- Need to pass through a drive from **outside the LAN**? Tunnel USB/IP over **Tailscale** or
+  an **SSH tunnel** instead of exposing port 3240 directly.
+- **Read-only stays guaranteed:** the app host always mounts the drive read-only
+  (`mount_readonly.sh`, with write-protection verification), even though the block device is
+  physically on another machine.
+- While a drive is shared (bound), it is **not** available as a normal disk on the exporter
+  machine. For read-only archive drives that is fine.
+
+## NAS as exporter
+
+A typical consumer NAS (e.g. Synology DSM) usually cannot act as an exporter out of the box,
+because it ships without the usbip kernel modules (`usbip-host` / `usbip_host`). If you want
+to index drives held on a NAS, a file-level channel (a read-only NFS/SMB share, or a small
+read-only agent) is more robust than trying to build usbip modules for the NAS firmware.
+
+## Files
+
+| File | Role |
 |---|---|
-| `usbip_ctl.sh` | Server-helper (importer): `ensure-module`, `list`, `attach`, `ports`, `detach`. Aangeroepen door `web_app.py`. |
-| `windows/install-usbipd.ps1` | usbipd-win installeren (Administrator). |
-| `windows/export-disk.ps1` | USB-schijf delen/vrijgeven op Windows. |
-| `linux/setup-exporter.sh` | Linux-machine als exporter inrichten. |
-| `linux/bind-disk.sh` | USB-schijf delen/vrijgeven op Linux. |
+| `usbip_ctl.sh` | App-host helper (importer): `ensure-module`, `list`, `attach`, `ports`, `detach`. Called by `web_app.py`. |
+| `windows/install-usbipd.ps1` | Install usbipd-win (Administrator). |
+| `windows/export-disk.ps1` | Share/release a USB drive on Windows. |
+| `linux/setup-exporter.sh` | Set up a Linux machine as exporter. |
+| `linux/bind-disk.sh` | Share/release a USB drive on Linux. |

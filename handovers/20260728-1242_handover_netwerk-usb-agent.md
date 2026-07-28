@@ -65,7 +65,7 @@ op alle geregistreerde agents.
 ### 8. Praktische context
 - App: de server <server-ip>:5059 (systemd `archive-search-workbench.service`, sudo NOPASSWD).
 - Deploy: lokaal committen → `git push` naar NAS bare repo
- (`ssh://<nas-host>/~/git-repos/indexer-exhdd-archive-search-workbench.git`) → op de server
+ (`ssh://<nas-host>/~/git-repos/<repo>.git`) → op de server
  `git pull --ff-only && sudo systemctl restart archive-search-workbench`.
 - Agent: Desktop <jouw-machine-ip> (DHCP verschuift; was), poort 5060, token in `data/remote_agents.json`.
 - Poorten: 5059 web, 5060 agent, 3240 usbip. Diagrammen: pummelaar :5050. Issues: Mantis :5231.

@@ -1,31 +1,34 @@
-# Netwerk-USB (USB/IP) — exporter-hosts
-# ======================================
-# Machines waaraan je een archiefschijf kunt hangen om hem via USB/IP door te
-# geven aan de server (.195, de importer). De app leest deze lijst voor het
-# "Netwerk-USB"-paneel.
+# Network-USB (USB/IP) — exporter hosts
+# =====================================
+# Machines you can attach an archive drive to, to pass it over USB/IP to the app
+# host (the importer). The app reads this list for the "Network-USB" panel.
 #
-# Velden per host:
-#   name  : weergavenaam in de UI
-#   host  : adres dat 'usbip attach -r <host>' gebruikt (IP of hostname/Tailscale-naam)
-#   os    : windows | linux  (bepaalt welke exporter-instructie de UI toont)
-#   notes : vrije toelichting
+# Fields per host:
+#   name  : display name in the UI
+#   host  : address 'usbip attach -r <host>' uses (IP or hostname / Tailscale name)
+#   os    : windows | linux  (decides which exporter instructions the UI shows)
+#   notes : free-form description
 #
-# Zie network-usb/README.md voor het instellen van de exporter per machinetype.
-# De NAS (.249) ontbreekt bewust: DSM mist de usbip-kernelmodules — zie
-# docs/MANTIS-NAS-USBIP-KANAAL.md.
+# See network-usb/README.md for setting up the exporter per machine type.
+# A typical consumer NAS cannot act as an exporter out of the box (missing usbip
+# kernel modules); see network-usb/README.md for a file-level alternative.
+#
+# This is an EXAMPLE. Copy it to config/remote_hosts.yaml and fill in your own
+# machines. config/remote_hosts.yaml is git-ignored (per deployment); if it is
+# absent, the app falls back to this example file.
 
 hosts:
-  - name: "Desktop (<jouw-machine>)"
-    host: "<jouw-machine-ip>"
+  - name: "My desktop"
+    host: "192.168.1.50"          # replace with your machine's IP or hostname
     os: windows
-    notes: "Windows 11 — usbipd-win + archief-agent. Hoofd-werkplek. (DHCP: was .125)"
+    notes: "Windows 11 — usbipd-win + per-machine agent."
 
-  - name: "<werkstation>"
-    host: "<werkstation-ip>"
+  - name: "Workstation"
+    host: "workstation.local"
     os: windows
-    notes: "Windows-werkstation — usbipd-win."
+    notes: "Windows workstation — usbipd-win."
 
-  - name: "<andere-machine>"
-    host: "<andere-machine-ip>"
+  - name: "Linux box"
+    host: "192.168.1.51"
     os: linux
-    notes: "<andere-machine> (user <gebruiker>). OS verifiëren; bij Linux usbip-exporter, bij Windows usbipd-win."
+    notes: "Linux — usbip exporter."
