@@ -1,58 +1,58 @@
-# Archive Search Workbench — Bouwinstructie
+# Archive Search Workbench — Build Instruction
 
-> **Versie:** 1.0
-> **Datum:** 2026-05-24
-> **Machine:** de indexeer-server (<server-ip>), Ubuntu 24.04
-> **Doel:** Persoonlijke "digitale archeologie"-werkbank voor oude opslagmedia
+> **Version:** 1.0
+> **Date:** 2026-05-24
+> **Machine:** the indexing app host (<server-ip>), Ubuntu 24.04
+> **Goal:** Personal "digital archaeology" workbench for old storage media
 
 ---
 
-## Doel
+## Goal
 
-Oude externe opslagmedia veilig aansluiten en doorzoekbaar maken.
-Zoekbaar: PDF, Word, Excel, databases, SQL, Markdown/YAML/code, afbeeldingen, archieven, oude projectstructuren, kennisfragmenten.
+Safely connect old external storage media and make them searchable.
+Searchable: PDF, Word, Excel, databases, SQL, Markdown/YAML/code, images, archives, old project structures, knowledge fragments.
 
-## Ondersteunde media
+## Supported media
 
 - USB HDD
 - USB SSD
-- USB-stick / flash drive
-- SD-kaart
-- externe SATA via USB
-- later: NAS-share of disk image
+- USB stick / flash drive
+- SD card
+- external SATA via USB
+- later: NAS share or disk image
 
-## Kernprincipes
+## Core principles
 
-- **Read-only** richting externe media — ALTIJD
-- **Niets verwijderen, verplaatsen of schrijven** naar externe media
-- **Alles lokaal opslaan** (metadata, indexes, rapporten)
-- **Eerst metadata en zoekbaarheid**, later deduplicatie
-- **Eerste versie:** één medium tegelijk
-- **Latere versie:** meerdere media via powered USB-hub met queue
-- **Silent failure verboden** (DEVs-Base Kernregel 0)
-- **Elke fout wordt gelogd, geteld, zichtbaar gemaakt**
+- **Read-only** toward external media — ALWAYS
+- **Never delete, move, or write** to external media
+- **Store everything locally** (metadata, indexes, reports)
+- **Metadata and searchability first**, deduplication later
+- **First version:** one medium at a time
+- **Later version:** multiple media via powered USB hub with a queue
+- **Silent failure forbidden** (DEVs-Base Core Rule 0)
+- **Every error is logged, counted, made visible**
 
-## Architectuur
+## Architecture
 
-    Externe fysieke drager
+    External physical carrier
         ↓
-    read-only mount (remount indien nodig)
+    read-only mount (remount if needed)
         ↓
-    fysiek medium registreren + stickerlabel geven
+    register physical medium + assign sticker label
         ↓
-    metadata scan (met checkpoint/resume)
+    metadata scan (with checkpoint/resume)
         ↓
-    SQLite metadata-catalogus
+    SQLite metadata catalog
         ↓
     Recoll full-text index (per medium)
         ↓
-    zoekinterface + rapportages
+    search interface + reports
 
-## Projectmap
+## Project directory
 
     ~/archive-search-workbench/
 
-## Structuur
+## Structure
 
     archive-search-workbench/
     ├── setup.sh
@@ -82,16 +82,16 @@ Zoekbaar: PDF, Word, Excel, databases, SQL, Markdown/YAML/code, afbeeldingen, ar
     ├── COMPONENTS.md
     ├── ROADMAP.md
     ├── archive_search_workbench_glossary.json
-    └── INSTRUCTIE.md (dit document)
+    └── INSTRUCTIE.md (this document)
 
-## Ontdekte realiteit bij eerste uitvoering (2026-05-24)
+## Reality discovered on first run (2026-05-24)
 
-### Bestaande tools op de server
+### Existing tools on the app host
 - python3 3.12.3 (/usr/bin/python3)
-- sqlite3 aanwezig
-- smartctl aanwezig (maar USB-bridge vereist -d optie)
+- sqlite3 present
+- smartctl present (but USB bridge requires the -d option)
 
-### Ontbrekende tools (te installeren)
+### Missing tools (to be installed)
 - recoll + recollindex
 - ripgrep (rg)
 - exiftool / libimage-exiftool-perl
@@ -101,31 +101,31 @@ Zoekbaar: PDF, Word, Excel, databases, SQL, Markdown/YAML/code, afbeeldingen, ar
 - unzip, p7zip-full, unrar
 - mediainfo
 
-### Mount-probleem ontdekt
-De FREECOM 250GB is door devmon gemount als:
+### Mount problem discovered
+The FREECOM 250GB was mounted by devmon as:
 - Type: fuseblk (NTFS via ntfs-3g)
-- Opties: rw,nosuid,nodev,noatime,user_id=0,group_id=0,default_permissions,allow_other
-- Probleem: user_id=0 → alleen root kan lezen
-- Oplossing: remount met uid/gid van <nas-gebruiker>, of sudo gebruiken voor scan
-- Extra: mount is rw, moet ro worden voor veiligheid
+- Options: rw,nosuid,nodev,noatime,user_id=0,group_id=0,default_permissions,allow_other
+- Problem: user_id=0 → only root can read
+- Solution: remount with the uid/gid of <nas-user>, or use sudo for the scan
+- Extra: mount is rw, must become ro for safety
 
 ### SMART via USB
-- USB-bridge 0x07ab:0xfcfe niet automatisch herkend
-- Moet met -d sat of -d scsi geprobeerd worden
-- Niet-blokkerend: SMART is nice-to-have, niet vereist
+- USB bridge 0x07ab:0xfcfe not automatically recognized
+- Must be tried with -d sat or -d scsi
+- Non-blocking: SMART is nice-to-have, not required
 
-### Eerste testmedium
+### First test medium
 - Label: FREECOM_250GB
 - UUID: 08F42991F42981D4
 - Filesystem: NTFS
 - Model: 5DLAT80 (Maxtor 250GB IDE via USB)
-- Bestanden: 134
-- Gebruikt: 95GB (vmware images)
-- Inhoud: PINGS (oude PC-backups), vmware conv machines
+- Files: 134
+- Used: 95GB (vmware images)
+- Contents: PINGS (old PC backups), vmware conv machines
 
-## Setup vereisten
+## Setup requirements
 
-### Systeem-packages (apt)
+### System packages (apt)
 python3-venv, python3-pip, sqlite3, recoll, antiword, catdoc,
 poppler-utils, unzip, p7zip-full, unrar, ripgrep, smartmontools,
 exiftool (libimage-exiftool-perl), mediainfo
@@ -133,10 +133,10 @@ exiftool (libimage-exiftool-perl), mediainfo
 ### Python venv packages (.venv)
 pyyaml, rich, tqdm, pandas, openpyxl, python-docx, pymupdf, pillow, tabulate
 
-### Setup moet idempotent zijn
-- Meerdere keren draaien mag niets stukmaken
-- Bestaande config niet overschrijven zonder backup
-- Bestaande database niet verwijderen
+### Setup must be idempotent
+- Running multiple times must not break anything
+- Do not overwrite existing config without a backup
+- Do not delete an existing database
 
 ## Config (config/config.yaml)
 
@@ -176,9 +176,9 @@ exclude_dirs:
 
 ## Database schema
 
-### Tabel: physical_media
+### Table: physical_media
 - media_id (PK, autoincrement)
-- archive_label (uniek, bv ARCHIVE-DISK-001)
+- archive_label (unique, e.g. ARCHIVE-DISK-001)
 - media_type (usb_hdd|usb_ssd|usb_flash|sd_card|external_sata_usb|unknown)
 - first_seen (ISO timestamp)
 - last_seen (ISO timestamp)
@@ -188,12 +188,12 @@ exclude_dirs:
 - device_serial
 - size_bytes
 - filesystem_type
-- smart_status (indien beschikbaar)
+- smart_status (if available)
 - sticker_confirmed (boolean)
 - sticker_confirmed_at (ISO timestamp)
 - notes
 
-### Tabel: scans
+### Table: scans
 - scan_id (PK)
 - media_id (FK)
 - archive_label
@@ -202,57 +202,57 @@ exclude_dirs:
 - end_time
 - number_of_files
 - total_bytes
-- last_checkpoint_dir (voor resume)
+- last_checkpoint_dir (for resume)
 - status (running|completed|failed|interrupted)
 - errors
 
-### Tabel: files
-(Alle velden uit oorspronkelijke instructie + extra:)
-- scan_checkpoint_batch (welke batch dit bestand verwerkte)
+### Table: files
+(All fields from the original instruction + extra:)
+- scan_checkpoint_batch (which batch processed this file)
 
 ### Indexes
 filename, extension, original_content_date, author, title,
 source_root, archive_label, media_id, extension_group
 
-## Verbeteringen t.o.v. oorspronkelijk plan
+## Improvements over the original plan
 
 1. **Encoding fallback** — filename_encoding_fallback in config
-2. **Scan checkpointing** — per-directory checkpoint, resume na crash
-3. **Symlink/junction protectie** — follow_symlinks: false + realpath tracking
-4. **SMART health check** — bij registratie, waarschuwing als failing
-5. **Recoll config generatie** — per index een recoll.conf maken
-6. **Lock mechanisme** — voorkom dubbele scan of unmount-tijdens-scan
-7. **Zip bomb protectie** — max uncompressed size, max files, max path depth
-8. **DB migratie** — schema versioning voor latere uitbreidingen
-9. **Silent failure verboden** — overal foutentelling en -rapportage
-10. **Glossary + VOORTGANG.md** — conform DEVs-Base standaarden
+2. **Scan checkpointing** — per-directory checkpoint, resume after crash
+3. **Symlink/junction protection** — follow_symlinks: false + realpath tracking
+4. **SMART health check** — on registration, warning if failing
+5. **Recoll config generation** — create a recoll.conf per index
+6. **Lock mechanism** — prevent double scan or unmount-during-scan
+7. **Zip bomb protection** — max uncompressed size, max files, max path depth
+8. **DB migration** — schema versioning for later extensions
+9. **Silent failure forbidden** — error counting and reporting everywhere
+10. **Glossary + VOORTGANG.md** — per DEVs-Base standards
 
-## DEVs-Base documentatie-eisen (extra verplicht)
+## DEVs-Base documentation requirements (additionally mandatory)
 
-1. archive_search_workbench_glossary.json (begrippen)
-2. VOORTGANG.md (sessielog, status)
-3. COMPONENTS.md (per component: input/output/fouten contract)
+1. archive_search_workbench_glossary.json (glossary)
+2. VOORTGANG.md (session log, status)
+3. COMPONENTS.md (per component: input/output/error contract)
 4. Smoke test (tests/smoke_test.sh)
-5. Geen silent failures — elke except logt + telt
-6. Progressive disclosure docs (README gelaagd)
-7. Nederlandstalige docstrings en commentaar
+5. No silent failures — every except logs + counts
+6. Progressive disclosure docs (layered README)
+7. Docstrings and comments in the project language
 
 ## Menu (menu.sh)
 
-[1] Toon aangesloten opslagmedia
-[2] Toon mountpoints
-[3] Registreer / label nieuw fysiek medium
-[4] Mount extern medium read-only
-[5] Bekijk/wijzig config
+[1] Show connected storage media
+[2] Show mountpoints
+[3] Register / label a new physical medium
+[4] Mount external medium read-only
+[5] View/edit config
 [6] Scan metadata
-[7] Bouw/update Recoll index
-[8] Zoek op bestandsnaam/metadata
-[9] Zoek in documentinhoud
-[10] Maak rapportages
-[11] Toon scanstatus
-[12] Veilige unmount
-[13] Toon bekende fysieke media
-[14] Bekijk logs
-[0] Stop
+[7] Build/update Recoll index
+[8] Search on filename/metadata
+[9] Search inside document content
+[10] Generate reports
+[11] Show scan status
+[12] Safe unmount
+[13] Show known physical media
+[14] View logs
+[0] Quit
 
 ---

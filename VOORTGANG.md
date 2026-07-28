@@ -1,76 +1,76 @@
-# VOORTGANG — Archive Search Workbench
+# PROGRESS — Archive Search Workbench
 
-## Status: MVP werkend (2026-05-24)
+## Status: MVP working (2026-05-24)
 
-Eerste volledige end-to-end doorloop geslaagd op de server.
+First full end-to-end run succeeded on the app host.
 
-## Sessie 2026-07-24 — Netwerk-USB (USB/IP)
+## Session 2026-07-24 — Network-USB (USB/IP)
 
-Toegevoegd: schijf op een **andere machine** kunnen indexeren/uitlezen via USB/IP.
-De server is de importer; de machine waar de schijf hangt is de exporter.
+Added: the ability to index/read a disk on **another machine** via USB/IP.
+The app host is the importer; the machine where the disk is attached is the exporter.
 
-### Uitgevoerd
-- [x] Ontwerpkeuze: USB/IP (blok-niveau) — schijf verschijnt op de server als lokale `/dev/sdX`,
- zodat de bestaande mount/scan/index-pijplijn ongewijzigd werkt (ook nieuw indexeren op afstand)
-- [x] `network-usb/usbip_ctl.sh` — dunne, geprivilegieerde usbip-wrapper (ensure-module/list/attach/ports/detach)
-- [x] `config/remote_hosts.yaml` — exporter-hosts ()
+### Done
+- [x] Design choice: USB/IP (block level) — the disk appears on the app host as a local `/dev/sdX`,
+ so the existing mount/scan/index pipeline works unchanged (including indexing remotely from scratch)
+- [x] `network-usb/usbip_ctl.sh` — thin, privileged usbip wrapper (ensure-module/list/attach/ports/detach)
+- [x] `config/remote_hosts.yaml` — exporter hosts ()
 - [x] `web_app.py` — endpoints `/api/remote/{hosts,devices,attach,detach,ports}`,
- state `data/remote_usbip_state.json`, en "Netwerk-USB"-paneel in Beheer (met i18n nl/en)
-- [x] Eject-integratie: `_maybe_detach_remote` in `api_eject` → `usbip detach` bij uitwerpen
-- [x] Exporter-setup + docs: Windows (`usbipd-win`) en Linux (`usbip`/`usbipd`), `network-usb/README.md`
-- [x] Ontwerpnotitie voor toekomstig de server→NAS kanaal
+ state `data/remote_usbip_state.json`, and "Network-USB" panel in Admin (with i18n nl/en)
+- [x] Eject integration: `_maybe_detach_remote` in `api_eject` → `usbip detach` on eject
+- [x] Exporter setup + docs: Windows (`usbipd-win`) and Linux (`usbip`/`usbipd`), `network-usb/README.md`
+- [x] Design note for a future app-host→NAS channel
 
-### Ontwerpbeslissingen
-- **Importer = de server**: heeft al usbip-tools + `vhci-hcd`-module + sudo NOPASSWD
-- **Helper dun houden**: alleen privileged usbip-verbs; parsen van output in Python (escaping-controle)
-- **Auto-surfacing**: een ge-attachte USB/IP-schijf rapporteert `tran=usb` in lsblk → verschijnt
- vanzelf in `/api/disks`; geen wijziging aan de scan/mount-logica nodig
-- **NAS uitgesteld**: DSM mist usbip-kernelmodules → apart kanaal als Mantis-bevinding
+### Design decisions
+- **Importer = the app host**: already has usbip tools + `vhci-hcd` module + sudo NOPASSWD
+- **Keep the helper thin**: only privileged usbip verbs; parse output in Python (escaping control)
+- **Auto-surfacing**: an attached USB/IP disk reports `tran=usb` in lsblk → appears
+ automatically in `/api/disks`; no change to the scan/mount logic needed
+- **NAS deferred**: DSM lacks usbip kernel modules → separate channel as a backlog finding
 
-### Aandachtspunten / open
-- Fysieke end-to-end test vereist `usbipd-win`-install (Administrator) op een Windows-machine
-- USB/IP poort 3240 is onversleuteld/ongeauthenticeerd → LAN-only; buiten-LAN via Tailscale/SSH-tunnel
+### Points of attention / open
+- Physical end-to-end test requires a `usbipd-win` install (Administrator) on a Windows machine
+- USB/IP port 3240 is unencrypted/unauthenticated → LAN-only; outside the LAN via Tailscale/SSH tunnel
 
-## Sessie 2026-05-24
+## Session 2026-05-24
 
-### Uitgevoerd
-- [x] Setup.sh gemaakt en uitgevoerd (alle 8 tools OK, venv OK)
-- [x] Database schema v1 aangemaakt (physical_media, scans, files + indexes)
-- [x] detect_disks.sh — toont aangesloten media met details
-- [x] mount_readonly.sh — hermont FREECOM van rw naar ro, schrijfbeveiliging geverifieerd
-- [x] scan_metadata.py — 73 bestanden, 0 fouten, 94.2 GB verwerkt
-- [x] extract_metadata.py — PDF, Office, EXIF, datum-prioriteitssysteem
-- [x] build_recoll_index.sh — full-text index gebouwd, 8 resultaten voor "Dell"
-- [x] search_filename.py — SQLite zoeken werkt
-- [x] search_content.sh — Recoll full-text zoeken werkt
-- [x] report.py — rapport.md + 10 CSV exports gegenereerd
-- [x] menu.sh — interactief menu met alle 14 opties
-- [x] INSTRUCTIE.md met ontdekte problemen
+### Done
+- [x] Created and ran setup.sh (all 8 tools OK, venv OK)
+- [x] Created database schema v1 (physical_media, scans, files + indexes)
+- [x] detect_disks.sh — shows connected media with details
+- [x] mount_readonly.sh — remounted FREECOM from rw to ro, write protection verified
+- [x] scan_metadata.py — 73 files, 0 errors, 94.2 GB processed
+- [x] extract_metadata.py — PDF, Office, EXIF, date priority system
+- [x] build_recoll_index.sh — full-text index built, 8 results for "Dell"
+- [x] search_filename.py — SQLite search works
+- [x] search_content.sh — Recoll full-text search works
+- [x] report.py — rapport.md + 10 CSV exports generated
+- [x] menu.sh — interactive menu with all 14 options
+- [x] INSTRUCTIE.md with discovered issues
 
-### Ontdekte problemen (opgelost)
-1. **Bash arithmetic `((x++))` met `set -e`** — geeft exit 1 bij waarde 0. Opgelost: `$((x+1))` syntax.
-2. **Mount permissies devmon** — devmon mount NTFS met uid=0,gid=0 → onleesbaar voor <nas-gebruiker>. Opgelost: remount via ntfs-3g met uid/gid van user.
-3. **SMART via USB bridge** — bridge 0x07ab:0xfcfe niet herkend. Niet-blokkerend, SMART is optioneel.
-4. **Heredoc met single-quotes in Python** — SSH heredoc faalt bij complexe Python. Opgelost: lokaal schrijven + scp.
-5. **blockdev zonder sudo** — grootte-weergave 0GB in detect_disks.sh. Cosmetisch, niet gefixt.
+### Discovered issues (resolved)
+1. **Bash arithmetic `((x++))` with `set -e`** — returns exit 1 at value 0. Fixed: `$((x+1))` syntax.
+2. **Mount permissions devmon** — devmon mounts NTFS with uid=0,gid=0 → unreadable for <nas-user>. Fixed: remount via ntfs-3g with the user's uid/gid.
+3. **SMART via USB bridge** — bridge 0x07ab:0xfcfe not recognized. Non-blocking, SMART is optional.
+4. **Heredoc with single quotes in Python** — SSH heredoc fails on complex Python. Fixed: write locally + scp.
+5. **blockdev without sudo** — size shows 0GB in detect_disks.sh. Cosmetic, not fixed.
 
-### Ontwerpbeslissingen
-- **Checkpointing per directory** (niet per bestand) — balans tussen granulariteit en overhead
-- **Lock via PID-file** — eenvoudig, stale lock detectie via `os.kill(pid, 0)`
-- **Recoll index per medium** — schaalt beter, kan individueel herbouwd worden
-- **Schema versioning in DB** — MIGRATIONS dict, makkelijk uit te breiden
-- **Archive label als directory-naam** onder /mnt/archive-ingest/ — voorspelbaar, geen register nodig
+### Design decisions
+- **Checkpointing per directory** (not per file) — balance between granularity and overhead
+- **Lock via PID file** — simple, stale lock detection via `os.kill(pid, 0)`
+- **Recoll index per medium** — scales better, can be rebuilt individually
+- **Schema versioning in DB** — MIGRATIONS dict, easy to extend
+- **Archive label as directory name** under /mnt/archive-ingest/ — predictable, no registry needed
 
-### Eerste testmedium
+### First test medium
 - **Label:** ARCHIVE-DISK-001
-- **Fysiek:** Freecom Classic 250GB USB HDD (Maxtor 5DLAT80, IDE via USB bridge)
+- **Physical:** Freecom Classic 250GB USB HDD (Maxtor 5DLAT80, IDE via USB bridge)
 - **UUID:** 08F42991F42981D4
-- **Inhoud:** Oude PINGS (disk images Dell Dimensions 3000, Latitude D600) uit 2003-2010, VMware conversie Toshiba 120GB
-- **73 bestanden, 94.2 GB** — voornamelijk disk images (.000/.001 splits), 1 grote .vmdk (77GB)
+- **Contents:** Old PINGS (disk images Dell Dimensions 3000, Latitude D600) from 2003-2010, VMware conversion Toshiba 120GB
+- **73 files, 94.2 GB** — mostly disk images (.000/.001 splits), 1 large .vmdk (77GB)
 
-## Volgende stappen
-- [ ] Sticker plakken op FREECOM en bevestigen in DB
-- [ ] Tweede medium testen (USB-stick of SD-kaart met meer diverse bestanden)
-- [ ] Archive-inhoud indexering (zip/rar/7z doorzoeken)
-- [ ] OCR toevoegen voor gescande PDF's
-- [ ] Webinterface (Flask, poort TBD uit 5059-5099 range)
+## Next steps
+- [ ] Stick a label on FREECOM and confirm it in the DB
+- [ ] Test a second medium (USB stick or SD card with more diverse files)
+- [ ] Archive content indexing (search inside zip/rar/7z)
+- [ ] Add OCR for scanned PDFs
+- [ ] Web interface (Flask, port TBD from the 5059-5099 range)

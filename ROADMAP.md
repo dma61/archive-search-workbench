@@ -1,59 +1,59 @@
 # ROADMAP — Archive Search Workbench
 
-## Fase 1: MVP (VOLTOOID 2026-05-24)
-- [x] Eén medium tegelijk scannen
-- [x] Read-only mount met verificatie
-- [x] SQLite metadata catalogus
-- [x] Recoll full-text indexering
-- [x] Zoeken op bestandsnaam/metadata
-- [x] Zoeken in documentinhoud
-- [x] Rapportage (markdown + CSV)
-- [x] Interactief menu
-- [x] Stickerlabel workflow
+## Phase 1: MVP (COMPLETED 2026-05-24)
+- [x] Scan one medium at a time
+- [x] Read-only mount with verification
+- [x] SQLite metadata catalog
+- [x] Recoll full-text indexing
+- [x] Search on filename/metadata
+- [x] Search inside document content
+- [x] Reporting (markdown + CSV)
+- [x] Interactive menu
+- [x] Sticker label workflow
 
-## Fase 2: Verdieping
-- [ ] Archive-inhoud indexering (zip/rar/7z uitpakken naar temp, scannen, opruimen)
-- [ ] OCR voor gescande PDF's (tesseract)
-- [ ] Hashing per bestand (sha256) voor deduplicatie-voorbereiding
-- [ ] SMART health check bij registratie (met USB bridge fallback)
-- [ ] Encoding-reparatie voor oude Windows-bestandsnamen (cp1252)
-- [ ] Meer metadata: e-mail .msg/.eml headers, .pst navigatie
+## Phase 2: Depth
+- [ ] Archive content indexing (extract zip/rar/7z to temp, scan, clean up)
+- [ ] OCR for scanned PDFs (tesseract)
+- [ ] Hashing per file (sha256) to prepare for deduplication
+- [ ] SMART health check on registration (with USB bridge fallback)
+- [ ] Encoding repair for old Windows filenames (cp1252)
+- [ ] More metadata: email .msg/.eml headers, .pst navigation
 
-## Fase 3: Multi-media
-- [ ] Meerdere media tegelijk via powered USB-hub
-- [ ] Queue-systeem voor sequentiële verwerking
-- [ ] Automatische detectie + ingest bij aansluiten (udev rule)
-- [ ] Scan-resume na crash (per-directory checkpoint)
-- [ ] Parallel indexering (Recoll per medium)
+## Phase 3: Multi-media
+- [ ] Multiple media at once via powered USB hub
+- [ ] Queue system for sequential processing
+- [ ] Automatic detection + ingest on connect (udev rule)
+- [ ] Scan resume after crash (per-directory checkpoint)
+- [ ] Parallel indexing (Recoll per medium)
 
-## Fase 3.5: Netwerk-USB (USB/IP) — schijf op elke machine indexeren
-- [x] USB/IP-kanaal: schijf op andere machine als lokale `/dev/sdX` op de server
-- [x] Server-helper `network-usb/usbip_ctl.sh` (ensure-module/list/attach/ports/detach)
-- [x] App-endpoints `/api/remote/*` + "Netwerk-USB"-paneel in Beheer
-- [x] Eject koppelt automatisch los (`usbip detach`)
-- [x] Exporter-setup Windows (usbipd-win) en Linux (usbip/usbipd) + docs
-- [ ] Apart de server→NAS kanaal (DSM mist usbip-modules)
-- [ ] Optioneel: USB/IP over Tailscale/SSH-tunnel voor buiten-LAN gebruik
+## Phase 3.5: Network-USB (USB/IP) — index a disk on any machine
+- [x] USB/IP channel: disk on another machine as a local `/dev/sdX` on the app host
+- [x] App-host helper `network-usb/usbip_ctl.sh` (ensure-module/list/attach/ports/detach)
+- [x] App endpoints `/api/remote/*` + "Network-USB" panel in Admin
+- [x] Eject detaches automatically (`usbip detach`)
+- [x] Exporter setup Windows (usbipd-win) and Linux (usbip/usbipd) + docs
+- [ ] Separate app-host→NAS channel (DSM lacks usbip modules)
+- [ ] Optional: USB/IP over Tailscale/SSH tunnel for use outside the LAN
 
-## Fase 4: Webinterface
-- [ ] Flask webinterface (poort uit 5059-5099 range)
-- [ ] Zoeken via browser
-- [ ] Thumbnail previews (afbeeldingen, PDF eerste pagina)
-- [ ] Resultaat-export (CSV, JSON)
-- [ ] Availability dashboard (welk medium online/offline)
+## Phase 4: Web interface
+- [ ] Flask web interface (port from the 5059-5099 range)
+- [ ] Search via browser
+- [ ] Thumbnail previews (images, PDF first page)
+- [ ] Result export (CSV, JSON)
+- [ ] Availability dashboard (which medium online/offline)
 
-## Fase 5: Intelligence
-- [ ] AI-samenvatting per document (lokaal LLM of API)
-- [ ] Automatische categorisatie/tagging
-- [ ] Knowledge graph (triplets uit documenten)
-- [ ] Deduplicatie met similarity scoring
-- [ ] Afbeeldingvergelijking (perceptual hash)
-- [ ] Tijdlijn-visualisatie van documenten
+## Phase 5: Intelligence
+- [ ] AI summary per document (local LLM or API)
+- [ ] Automatic categorization/tagging
+- [ ] Knowledge graph (triplets from documents)
+- [ ] Deduplication with similarity scoring
+- [ ] Image comparison (perceptual hash)
+- [ ] Timeline visualization of documents
 
-## Fase 6: Integratie
-- [ ] de server→NAS Netwerk-USB kanaal (apart kanaal)
-- [ ] NAS-export (catalogus syncen naar Synology)
-- [ ] Obsidian-integratie (zoekresultaten als markdown notes)
-- [ ] YAML export voor kennisbank
+## Phase 6: Integration
+- [ ] App-host→NAS Network-USB channel (separate channel)
+- [ ] NAS export (sync catalog to Synology)
+- [ ] Obsidian integration (search results as markdown notes)
+- [ ] YAML export for knowledge base
 - [ ] Disk image support (.img, .vhd, .vmdk mount)
-- [ ] Backup-verificatie (vergelijk catalogus met NAS-inhoud)
+- [ ] Backup verification (compare catalog with NAS contents)

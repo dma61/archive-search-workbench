@@ -5,87 +5,87 @@
  "begrippen": [
  {
  "term": "Archive Label",
- "definitie": "Uniek identificatielabel voor een fysiek opslagmedium (bijv. ARCHIVE-DISK-001). Wordt op een sticker op het medium geplakt en als directory-naam gebruikt.",
+ "definitie": "Unique identification label for a physical storage medium (e.g. ARCHIVE-DISK-001). It is placed on a sticker on the medium and used as the directory name.",
  "status": "stabiel"
  },
  {
- "term": "Stickerlabel",
- "definitie": "Fysieke sticker met het archive label, geplakt op het externe medium zodat het later herkend kan worden zonder aan te sluiten.",
+ "term": "Sticker Label",
+ "definitie": "Physical sticker with the archive label, applied to the external medium so it can be recognized later without connecting it.",
  "status": "stabiel"
  },
  {
  "term": "Read-only mount",
- "definitie": "Het aankoppelen van een extern medium aan het besturingssysteem waarbij schrijven onmogelijk is. Garandeert dat originele data ongewijzigd blijft.",
+ "definitie": "Mounting an external medium to the operating system in a way that makes writing impossible. Guarantees the original data remains unchanged.",
  "status": "stabiel"
  },
  {
  "term": "Metadata scan",
- "definitie": "Het recursief doorlopen van een medium en registreren van bestandseigenschappen (naam, grootte, datums, documentmetadata) in de SQLite catalogus.",
+ "definitie": "Recursively traversing a medium and recording file properties (name, size, dates, document metadata) in the SQLite catalog.",
  "status": "stabiel"
  },
  {
  "term": "Original content date",
- "definitie": "De best beschikbare schatting van wanneer de inhoud van een bestand oorspronkelijk is gemaakt, bepaald via een prioriteitensysteem (EXIF > document metadata > bestandsnaam > filesystem).",
+ "definitie": "The best available estimate of when a file's content was originally created, determined via a priority system (EXIF > document metadata > filename > filesystem).",
  "status": "stabiel"
  },
  {
  "term": "Date confidence",
- "definitie": "Betrouwbaarheidsindicator voor original_content_date: high (document metadata), medium (bestandsnaam), low (filesystem), suspect (onbetrouwbaar).",
+ "definitie": "Reliability indicator for original_content_date: high (document metadata), medium (filename), low (filesystem), suspect (unreliable).",
  "status": "stabiel"
  },
  {
  "term": "Extension group",
- "definitie": "Categorisering van bestandsextensies in functionele groepen: documenten, spreadsheets, databases, afbeeldingen, archieven, code_kennis.",
+ "definitie": "Categorization of file extensions into functional groups: documenten, spreadsheets, databases, afbeeldingen, archieven, code_kennis.",
  "status": "stabiel"
  },
  {
  "term": "Availability status",
- "definitie": "Of een bestand nu toegankelijk is: online (medium aangesloten), indexed_only (alleen metadata bekend), archive_offline (medium niet aangesloten), missing (verwacht maar niet gevonden).",
+ "definitie": "Whether a file is currently accessible: online (medium connected), indexed_only (only metadata known), archive_offline (medium not connected), missing (expected but not found).",
  "status": "stabiel"
  },
  {
  "term": "Scan checkpoint",
- "definitie": "Tussentijdse opslag van scanvoortgang per directory, zodat een onderbroken scan later hervat kan worden.",
+ "definitie": "Intermediate saving of scan progress per directory, so an interrupted scan can be resumed later.",
  "status": "voorlopig"
  },
  {
  "term": "Recoll index",
- "definitie": "Full-text zoekindex gebouwd door Recoll, per medium apart opgeslagen. Maakt zoeken in documentinhoud mogelijk zonder het medium aangesloten te hebben.",
+ "definitie": "Full-text search index built by Recoll, stored separately per medium. Enables searching document content without having the medium connected.",
  "status": "stabiel"
  },
  {
  "term": "PINGS",
- "definitie": "Disk image backups gemaakt met het programma PING (Partimage Is Not Ghost). Gesplitst in .000/.001/.002 bestanden.",
+ "definitie": "Disk image backups made with the PING program (Partimage Is Not Ghost). Split into .000/.001/.002 files.",
  "status": "voorlopig"
  },
  {
  "term": "Ingest",
- "definitie": "Het proces van een nieuw medium aansluiten, registreren, scannen en indexeren. Het medium wordt 'ingested' in de werkbank.",
+ "definitie": "The process of connecting, registering, scanning, and indexing a new medium. The medium is 'ingested' into the workbench.",
  "status": "stabiel"
  },
  {
- "term": "Netwerk-USB (USB/IP)",
- "definitie": "Techniek om de USB-poort van een andere machine over het netwerk (TCP-poort 3240) door te geven aan de server, zodat een daar aangesloten schijf op de server als lokale /dev/sdX verschijnt en normaal geindexeerd kan worden.",
+ "term": "Network-USB (USB/IP)",
+ "definitie": "Technique to forward the USB port of another machine over the network (TCP port 3240) to the app host, so that a disk connected there appears on the app host as a local /dev/sdX and can be indexed normally.",
  "status": "nieuw"
  },
  {
  "term": "Exporter",
- "definitie": "De machine waar de schijf fysiek aan hangt en die hem via usbipd deelt (bind). Windows: usbipd-win; Linux: usbip/usbipd.",
+ "definitie": "The machine to which the disk is physically attached and that shares it via usbipd (bind). Windows: usbipd-win; Linux: usbip/usbipd.",
  "status": "nieuw"
  },
  {
  "term": "Importer",
- "definitie": "De machine die een gedeelde USB-schijf over het netwerk aankoppelt (usbip attach). Hier altijd de server (), die de vhci-hcd kernelmodule gebruikt.",
+ "definitie": "The machine that mounts a shared USB disk over the network (usbip attach). Here always the app host (), which uses the vhci-hcd kernel module.",
  "status": "nieuw"
  },
  {
  "term": "busid",
- "definitie": "USB-bus-identificatie (bijv. 1-4 of 2-4) die een specifiek apparaat op een host aanduidt; gebruikt bij usbip bind/attach.",
+ "definitie": "USB bus identification (e.g. 1-4 or 2-4) that designates a specific device on a host; used with usbip bind/attach.",
  "status": "nieuw"
  },
  {
  "term": "vhci-hcd",
- "definitie": "Virtuele USB host-controller kernelmodule aan de importer-zijde; laat over USB/IP aangekoppelde apparaten als echte USB-devices verschijnen.",
+ "definitie": "Virtual USB host controller kernel module on the importer side; makes devices mounted over USB/IP appear as real USB devices.",
  "status": "nieuw"
  }
  ]
