@@ -1,41 +1,41 @@
 @startuml
-title HDD Indexer - sequence: zoeken -> openen -> lezen\n(transparant lokaal lezen; USB/IP alleen als het echt moet)
+title Archive Search Workbench - sequence: search -> open -> read\n(transparent local read; USB/IP only when needed)
 
-actor Gebruiker as U
+actor User as U
 participant "Browser" as B
-participant "web_app.py\n(de server :5059)" as APP
-database "SQLite\ncatalogus" as DB
-participant "ArchSW-loc agent\n(jouw machine :5060)" as AG
-participant "Schijf\n(E:/F:)" as D
+participant "web_app.py\n(app host :5059)" as APP
+database "SQLite\ncatalog" as DB
+participant "Per-machine agent\n(your machine :5060)" as AG
+participant "Drive" as D
 
-== Zoeken (werkt altijd, ook offline) ==
-U -> B : zoekterm (bv. pensioenbegrip)
+== Search (always works, even offline) ==
+U -> B : search term
 B -> APP : GET /api/search/metadata
 APP -> DB : query
-DB --> APP : resultaten (label + pad)
-APP -> AG : GET /disks  (welke schijven nu aangesloten?)
+DB --> APP : results (label + path)
+APP -> AG : GET /disks  (which drives are connected now?)
 AG --> APP : volumes + UUID
-APP --> B : resultaten; aanvinken/openen alleen bij aangesloten schijven
+APP --> B : results; open enabled only for connected drives
 
-== Openen (transparant) ==
-U -> B : klik "Bekijken" op een resultaat
+== Open (transparent) ==
+U -> B : click "View" on a result
 B -> APP : GET /api/smart-serve?label&path
-alt Schijf op de server gemount
-    APP -> APP : lees lokaal bestand
-else Schijf hangt aan jouw machine
+alt Drive mounted on the app host
+    APP -> APP : read local file
+else Drive attached to your machine
     APP -> AG : GET /read-file?volume=UUID&path (token)
-    AG -> D : lees bestand (read-only)
+    AG -> D : read file (read-only)
     D --> AG : bytes
     AG --> APP : bytes
-else Schijf nergens aangesloten
-    APP --> B : "Sluit schijf X aan"  (auto-detect polt tot hij verschijnt)
+else Drive not connected anywhere
+    APP --> B : "Connect drive X"  (auto-detect polls until it appears)
 end
-APP --> B : bestand (of ZIP bij multi-select)
-B --> U : bestand getoond / gedownload
+APP --> B : file (or ZIP for multi-select)
+B --> U : file shown / downloaded
 
-== Optioneel: nieuw indexeren via USB/IP ==
-U -> B : koppel via USB/IP
+== Optional: index a new drive via USB/IP ==
+U -> B : attach via USB/IP
 B -> APP : POST /api/remote/attach
 APP -> AG : POST /bind (busid)
-APP -> APP : usbip attach -> /dev/sdX -> mount ro -> scan -> catalogus
+APP -> APP : usbip attach -> /dev/sdX -> mount ro -> scan -> catalog
 @enduml

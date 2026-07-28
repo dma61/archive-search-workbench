@@ -1,5 +1,5 @@
 @startuml
-title Archive Search Workbench - Netwerk-USB\nZoek -> klik -> app koppelt de juiste schijf vanzelf\n(functioneel groot, techniek klein; gestippeld = nog te bouwen)
+title Archive Search Workbench - Network-USB\nSearch -> click -> the app attaches the right drive automatically
 
 skinparam componentStyle rectangle
 skinparam shadowing false
@@ -7,60 +7,52 @@ skinparam defaultTextAlignment center
 skinparam nodeFontSize 13
 skinparam componentFontSize 12
 
-actor "<b>Jij</b>\n<size:10>zoekt bv. pensioenbegrippen in de browser</size>" as USER
+actor "<b>You</b>\n<size:10>search in the browser</size>" as USER
 
-node "<b>De machine waar jij nu werkt</b>\n<size:10>herkend aan het IP van je browser - remote_hosts.yaml</size>" as EXP {
-  card "<b>De oude schijf die je zoekt</b>\n<size:10>externe USB-schijf / stick / SD (stickerlabel ARCHIVE-DISK-XXX)</size>" as DISK
-  component "<b>Archief-agent: regelt delen namens de app</b>\n<size:10>[nog te bouwen] achtergrond-service: schijf herkennen (serial/uuid) + delen (bind)</size>" as AGENT #line.dashed
-  DISK --> AGENT : agent ziet & deelt de schijf
+node "<b>The machine you are working on</b>\n<size:10>recognised by your browser IP - config/remote_hosts.yaml</size>" as EXP {
+  card "<b>The archived drive you want</b>\n<size:10>external USB drive / stick / SD (sticker ARCHIVE-DISK-XXX)</size>" as DISK
+  component "<b>Per-machine agent</b>\n<size:10>background service: recognise (serial/UUID) + share (bind)</size>" as AGENT
+  DISK --> AGENT : agent sees & shares the drive
 }
 
-cloud "<b>Je eigen netwerk (thuis-LAN)</b>\n<size:10>USB/IP over TCP 3240 (onversleuteld -> LAN-only) + agent-oproep met token</size>" as LAN
+cloud "<b>Your own LAN</b>\n<size:10>USB/IP over TCP 3240 (unencrypted -> LAN-only) + agent call with token</size>" as LAN
 
-node "<b>De indexeer-server - het brein</b>\n<size:10>de indexeer-server - <server-ip> - Ubuntu (altijd aan)</size>" as SERVER {
-  component "<b>Zoeken & openen</b>\n<size:10>web_app.py - Flask :5059 - zoekresultaat -> knop Openen</size>" as APP
-  component "<b>Regelt automatisch koppelen bij openen</b>\n<size:10>[nog te bouwen] roept agent v/d huidige machine aan: bind -> attach</size>" as ORCH #line.dashed
-  component "<b>Koppelt de schijf op afstand aan de server</b>\n<size:10>usbip_ctl.sh + vhci-hcd - usbip attach</size>" as CTL
-  card "<b>De schijf, nu zichtbaar op de server</b>\n<size:10>/dev/sdX</size>" as DEV
-  component "<b>Veilig openen: alleen lezen</b>\n<size:10>mount_readonly.sh - read-only + schrijfbeveiliging</size>" as MNT
-  database "<b>Kaartenbak: wat staat waar</b>\n<size:10>SQLite catalogus (ook offline doorzoekbaar)</size>" as DB
-  component "<b>Volledige tekst doorzoekbaar</b>\n<size:10>Recoll full-text index</size>" as RECOLL
+node "<b>The app host (the machine running the app)</b>\n<size:10>any host: laptop, server or NAS</size>" as SERVER {
+  component "<b>Search & open</b>\n<size:10>web_app.py - Flask :5059 - result -> Open button</size>" as APP
+  component "<b>Auto-attach on open</b>\n<size:10>calls the current machine's agent: bind -> attach</size>" as ORCH
+  component "<b>Imports the drive over USB/IP</b>\n<size:10>usbip_ctl.sh + vhci-hcd - usbip attach</size>" as CTL
+  card "<b>The drive, now visible on the host</b>\n<size:10>/dev/sdX</size>" as DEV
+  component "<b>Safe open: read-only</b>\n<size:10>mount_readonly.sh - read-only + write protection</size>" as MNT
+  database "<b>Catalog: what is stored where</b>\n<size:10>SQLite (searchable offline)</size>" as DB
+  component "<b>Full-text searchable</b>\n<size:10>Recoll index</size>" as RECOLL
 
-  APP --> DB : zoek pensioenbegrip
-  APP --> ORCH : klik Openen op offline bestand
-  ORCH --> CTL : koppel de schijf binnen
+  APP --> DB : search
+  APP --> ORCH : click Open on an offline file
+  ORCH --> CTL : attach the drive
   CTL --> DEV
-  DEV --> MNT : veilig aankoppelen
-  MNT --> APP : bestand openen / tonen
-  MNT ..> RECOLL : (bij nieuw indexeren)
+  DEV --> MNT : mount safely
+  MNT --> APP : open / show file
+  MNT ..> RECOLL : (when indexing)
 }
 
-USER --> APP : zoek + klik Openen
-ORCH ..> AGENT : "deel ARCHIVE-DISK-XXX" (via LAN, token)
+USER --> APP : search + click Open
+ORCH ..> AGENT : "share ARCHIVE-DISK-XXX" (via LAN, token)
 AGENT --> LAN
 LAN --> CTL
 
 note right of APP
-  <b>Bij offline schijf (keuze): vragen + auto-detecteren</b>
-  Toont "Sluit ARCHIVE-DISK-XXX aan op <jouw machine>"
-  en opent het bestand zodra de agent de schijf ziet.
-  Onboarding nieuwe machine: http://<server-ip>:5059/netwerk-usb (#1110)
+  <b>If the drive is offline: prompt + auto-detect</b>
+  Shows "Connect ARCHIVE-DISK-XXX to <your machine>"
+  and opens the file as soon as the agent sees the drive.
 end note
 
 note bottom of SERVER
-  == Ontwerp & fallback - Mantis #1113 ==
-  <b>Gekozen:</b> kleine achtergrond-agent per machine -> app handelt
-  detecteren, delen, koppelen en openen volledig af (hands-off).
-  <b>Fallback bij agent-failure (geen silent failure):</b>
-  1) Persistent bind: schijf eenmalig vastzetten (admin), daarna auto-gedeeld.
-  2) Hybride: agent waar kan, persistent bind als vangnet.
-  3) Handmatig: Netwerk-USB-paneel + /netwerk-usb (usbipd bind met de hand).
-
-  Haakt in op de onboarding-masterchecklist Mantis #527: een nieuwe machine
-  wordt via een voorspelbare lijst volledig productief; elke nieuwe mogelijkheid
-  registreert zich daar, zo blijft alles vindbaar.
+  == Design & fallback (no silent failure) ==
+  <b>Chosen:</b> a small per-machine agent -> the app handles
+  detect, share, attach and open end-to-end (hands-off).
+  <b>Fallback if the agent is unavailable:</b>
+  1) Persistent bind: pin the drive once (admin), then auto-shared.
+  2) Hybrid: agent where possible, persistent bind as safety net.
+  3) Manual: Network-USB panel (usbipd bind by hand).
 end note
-
-node "<b>De NAS - kan nog niet meedoen</b>\n<size:10>Synology <nas-ip> - DSM mist usbip-modules - apart kanaal: Mantis #1111</size>" as NAS #line.dashed
-NAS ..> SERVER : later, als apart kanaal
 @enduml

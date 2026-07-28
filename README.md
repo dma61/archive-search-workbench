@@ -1,116 +1,150 @@
 # Archive Search Workbench
 
-Persoonlijke "digitale archeologie"-werkbank voor oude opslagmedia.
-Maakt externe USB-schijven, sticks en SD-kaarten doorzoekbaar zonder ze permanent aangesloten te houden.
+**🌐 Language:** **English** · [Nederlands](README.nl.md)
 
-## Mens-AI-samenwerking & bijdragen
+A personal "digital archaeology" workbench for old storage media. Index your external
+USB drives, sticks and SD cards **once**, then full-text search their contents from any
+machine on your network — **even when the drive is offline**. Reconnect a drive over
+USB/IP to open the files you find.
 
-Dit project is ontwikkeld in nauwe **samenwerking tussen mens en AI-agent**: de mens stuurt,
-beslist en toetst; de AI analyseert, bouwt en documenteert — in kleine, controleerbare stappen en
-met eerlijke documentatie (geen stille fouten). We bevelen aan om aanpassingen op **dezelfde manier**
-te maken: mens-in-the-loop, transparant en herleidbaar.
+Think of it as *Google Desktop Search, but for your whole archive of external drives*.
 
-Wil je meebouwen? Dan werk je het prettigst met een **coding-agent**: plaats de meest recente
-**handover** uit de map [`handovers/`](handovers/) als startcontext in je agent (bijvoorbeeld
-Claude Code). Die handover bevat de huidige stand, de leidende bestanden, de bewuste keuzes en de
-eerstvolgende stap — zo kan de agent meteen gericht verder zonder het hele project opnieuw te
-analyseren. Rond je werk af met een verse handover voor de volgende.
+- 🔍 **Full-text + metadata search** across every drive you have ever indexed.
+- 🔌 **Attach a drive to any machine** on your LAN via USB/IP and index it remotely.
+- 🔒 **Read-only by design** — external media are never written to.
+- 💾 **Offline-capable** — the catalog and index live locally, so search keeps working
+  after you disconnect the drive; you only reconnect it to open a file.
 
-Verbeteringen, vragen en bevindingen zijn van harte welkom. **Koppel wijzigingen terug via een
-issue** in de repository (beschrijf wat, waarom en hoe getest) — dat houdt het project voor iedereen
-bruikbaar, herleidbaar en overdraagbaar. Dit is een door donaties ondersteund project; laat bij
-(her)gebruik de herkomst en de donatie-verwijzing intact (zie `NOTICE`).
+---
 
-## Snel starten
+## How it works
+
+1. **Connect** an external medium (USB HDD/SSD, stick, SD card).
+2. **Register** it — the app detects the medium and assigns a label
+   (e.g. `ARCHIVE-DISK-001`); put a matching sticker on the physical medium.
+3. **Read-only mount** — mounted automatically under `/mnt/archive-ingest/LABEL/`
+   (read-only; write protection is actively verified).
+4. **Scan** — all files are read into a local SQLite catalog with their metadata
+   (dates, authors, titles).
+5. **Index** — Recoll builds a full-text index of the document contents.
+6. **Search** — find files across **all** media at once, by metadata or by content.
+7. **Disconnect** — unmount safely. Search keeps working from the local catalog/index;
+   the app tells you which sticker label to reconnect to open the original file.
+
+## Human–AI collaboration & contributing
+
+This project was built in close **collaboration between a human and an AI agent**: the
+human steers, decides and reviews; the AI analyses, builds and documents — in small,
+verifiable steps and with honest documentation (no silent failures). We recommend making
+changes the **same way**: human-in-the-loop, transparent and traceable.
+
+Want to help build? You will work most comfortably with a **coding agent**: drop the most
+recent **handover** from [`handovers/`](handovers/) into your agent (e.g. Claude Code) as
+starting context. That handover captures the current state, the leading files, the
+deliberate choices and the next step — so the agent can continue precisely without
+re-analysing the whole project. Finish your work by writing a fresh handover for the next
+person.
+
+Improvements, questions and findings are very welcome. **Report changes via an issue** in
+the repository (describe *what*, *why* and *how you tested*) — that keeps the project
+usable, traceable and transferable for everyone. This is a donation-supported project;
+when reusing it, please keep the origin and donation reference intact (see [`NOTICE`](NOTICE)).
+
+## Installation
+
+See **[INSTALL.md](INSTALL.md)** for the full, step-by-step installation guide
+([Nederlandse versie](INSTALL.nl.md)). In short:
 
 ```bash
-cd ~/archive-search-workbench
-./setup.sh          # Eenmalig: installeer dependencies
-./menu.sh           # Start interactief menu
+git clone https://github.com/dma61/archive-search-workbench.git
+cd archive-search-workbench
+./setup.sh                          # system tools + Python virtualenv
+.venv/bin/pip install -r requirements.txt   # web app dependencies (Flask, ...)
+.venv/bin/python web_app.py         # → http://localhost:5059
 ```
 
-## Hoe het werkt
+## Two ways to use it
 
-1. **Aansluiten** — Sluit een externe drager aan (USB HDD, SSD, stick, SD-kaart)
-2. **Registreren** — Menu optie [3]: detecteert het medium, geeft een label (bijv. ARCHIVE-DISK-001), vraagt om sticker te plakken
-3. **Read-only mount** — Automatisch gemount onder `/mnt/archive-ingest/LABEL/` (read-only, schrijfbeveiliging geverifieerd)
-4. **Scannen** — Menu optie [6]: scant alle bestanden, extraheert metadata (datums, auteurs, titels)
-5. **Indexeren** — Menu optie [7]: bouwt Recoll full-text index voor zoeken in documentinhoud
-6. **Zoeken** — Menu optie [8] (metadata) of [9] (inhoud): vind bestanden over alle media heen
-7. **Loskoppelen** — Menu optie [12]: veilig unmounten. Zoeken blijft werken via lokale database/index.
+### Web interface (recommended)
 
-## Na loskoppelen
+```bash
+.venv/bin/python web_app.py         # → http://localhost:5059
+```
 
-- Metadata-zoeken (optie 8) werkt altijd — data staat in lokale SQLite database
-- Inhoud-zoeken (optie 9) werkt altijd — Recoll index is lokaal opgeslagen
-- Origineel bestand openen: sluit de juiste drager opnieuw aan (het systeem vertelt welk stickerlabel)
+Open `http://<server>:5059` in a browser to register media, scan, index, search
+(metadata + content), inspect logs, and manage network-USB drives.
 
-## Schijf op een andere machine (Netwerk-USB / USB/IP)
+### Command-line menu
 
-Je hoeft de schijf niet per se op de server aan te sluiten. Via **USB/IP** kun je hem aan
-elke machine in je netwerk hangen; de server importeert hem dan als lokale schijf en
-indexeert hem normaal.
+```bash
+./menu.sh
+```
 
-1. Richt de machine waar de schijf hangt eenmalig in als *exporter* (zie
+An interactive menu covering the same steps: detect ([3]), register, scan ([6]),
+index ([7]), metadata search ([8]), content search ([9]), unmount ([12]).
+
+## Using a drive on another machine (Network-USB / USB/IP)
+
+You do not have to plug the drive into the server. Via **USB/IP** you can attach it to any
+machine on your network; the server then imports it as a local disk and indexes it normally.
+
+1. Set up the machine that holds the drive as an *exporter* once (see
    [`network-usb/README.md`](network-usb/README.md)) — Windows via `usbipd-win`, Linux via `usbip`.
-2. Deel de schijf (`bind`) op die machine.
-3. Open de workbench → **Beheer** → paneel **"Netwerk-USB"** → kies de machine → **Koppel aan server**.
-4. De schijf verschijnt bij *Aangesloten schijven*; labelen/mounten/scannen gaat zoals normaal.
-5. **Uitwerpen** verbreekt automatisch de netwerk-koppeling.
+2. Share the drive (`bind`) on that machine.
+3. Open the workbench → **Manage** → **"Network-USB"** panel → pick the machine →
+   **Attach to server**.
+4. The drive appears under *Connected disks*; labelling/mounting/scanning works as usual.
+5. **Ejecting** automatically breaks the network attachment.
 
-> USB/IP-verkeer (poort 3240) is onversleuteld — gebruik dit op een vertrouwd LAN, of tunnel
-> via Tailscale/SSH voor buiten-LAN. De schijf wordt op de server altijd **read-only** gemount.
-> De Synology NAS ondersteunt dit nog niet (zie `docs/MANTIS-NAS-USBIP-KANAAL.md`).
+> USB/IP traffic (port 3240) is unencrypted — use it on a trusted LAN, or tunnel via
+> Tailscale/SSH for off-LAN use. On the server the drive is always mounted **read-only**.
 
-## Veiligheid
+## After disconnecting
 
-- Externe media worden ALTIJD read-only gemount
-- Er wordt NOOIT naar externe media geschreven
-- Schrijfbeveiliging wordt actief geverifieerd na mount
-- Alle data (database, indexes, rapporten) staat lokaal
+- **Metadata search** always works — data lives in the local SQLite database.
+- **Content search** always works — the Recoll index is stored locally.
+- To open an original file, reconnect the right medium (the app tells you which sticker label).
 
-## Commando-referentie
+## Safety
 
-```bash
-./detect_disks.sh                         # Toon aangesloten media
-./mount_readonly.sh /dev/sda1 LABEL       # Mount read-only
-./mount_readonly.sh --unmount LABEL       # Veilig unmounten
+- External media are ALWAYS mounted read-only.
+- The tool NEVER writes to external media.
+- Write protection is actively verified after mounting.
+- All data (database, indexes, reports) is stored locally.
 
-# Via Python venv:
-.venv/bin/python scripts/scan_metadata.py          # Scan alle gemounte media
-.venv/bin/python scripts/search_filename.py "zoek" # Zoek op naam/metadata
-.venv/bin/python scripts/search_filename.py -e pdf # Zoek alle PDF's
-.venv/bin/python scripts/report.py                 # Genereer rapporten
+## Requirements
 
-./build_recoll_index.sh                   # Bouw Recoll index (alle media)
-./build_recoll_index.sh ARCHIVE-DISK-001  # Specifiek medium
-./search_content.sh "zoekterm"            # Zoek in documentinhoud
-```
-
-## Vereisten
-
-- Ubuntu 22.04+ / 24.04
+- Ubuntu 22.04+ / 24.04 (Linux server side)
 - Python 3.10+
-- sudo-rechten voor mount/unmount
-- Recoll, ripgrep, exiftool, p7zip, unrar (geinstalleerd via setup.sh)
+- sudo rights for mount/unmount
+- Recoll, ripgrep, exiftool, p7zip, unrar (installed by `setup.sh`)
 
-## Projectstructuur
+Full details and pinned Python dependencies: [INSTALL.md](INSTALL.md) and
+[`requirements.txt`](requirements.txt).
+
+## Project structure
 
     archive-search-workbench/
-    ├── setup.sh                 # Installatie (idempotent)
-    ├── menu.sh                  # Interactief menu
-    ├── detect_disks.sh          # Media detectie
+    ├── web_app.py               # Flask web interface (port 5059) — primary UI
+    ├── setup.sh                 # Setup (idempotent): system tools + venv
+    ├── menu.sh                  # Interactive CLI menu
+    ├── detect_disks.sh          # Media detection
     ├── mount_readonly.sh        # Read-only mount/unmount
-    ├── build_recoll_index.sh    # Recoll indexering
-    ├── search_content.sh        # Full-text zoeken
-    ├── config/config.yaml       # Configuratie
-    ├── scripts/
-    │   ├── db_init.py           # Database schema + migraties
-    │   ├── scan_metadata.py     # Metadata scanner (checkpointing)
-    │   ├── extract_metadata.py  # Metadata extractie per type
-    │   ├── search_filename.py   # SQLite zoekopdrachten
-    │   └── report.py            # Rapportage generator
-    ├── data/archive_catalog.db  # SQLite catalogus
-    ├── recoll-indexes/          # Full-text indexes (per medium)
-    ├── output/                  # Gegenereerde rapporten
-    └── logs/                    # Alle logbestanden
+    ├── build_recoll_index.sh    # Recoll indexing
+    ├── search_content.sh        # Full-text search
+    ├── config/config.yaml       # Configuration
+    ├── scripts/                 # DB init, metadata scan/extract, search, reports
+    ├── network-usb/             # USB/IP exporter setup + per-machine agent
+    ├── docs/                    # Architecture & sequence diagrams (PUML + SVG)
+    ├── handovers/               # AI handovers (start context for coding agents)
+    ├── data/archive_catalog.db  # SQLite catalog (generated)
+    ├── recoll-indexes/          # Full-text indexes per medium (generated)
+    └── logs/                    # All log files (generated)
+
+## License & donation
+
+Licensed under the **Apache License 2.0** — see [`LICENSE`](LICENSE).
+
+This is a **donation-supported** project. Under Apache-2.0 §4(d) the [`NOTICE`](NOTICE)
+file must be preserved on reuse, modification and distribution. Please keep the donation
+reference visible and working so continued development stays supported.

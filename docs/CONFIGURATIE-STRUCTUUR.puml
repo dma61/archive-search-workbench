@@ -1,55 +1,48 @@
 @startuml
-title HDD Indexer - configuratie (structuur/deployment)\nWie draait waar, welke poorten, en hoe alles samenhangt
+title Archive Search Workbench - deployment & ports (generic)\nWho runs where, and which ports connect them
 
 skinparam componentStyle rectangle
 skinparam shadowing false
 skinparam defaultTextAlignment center
-skinparam nodefontSize 13
+skinparam nodeFontSize 13
 
-actor "Gebruiker" as USER
+actor "User" as USER
 
-node "Jouw werkplek (bv. Desktop <jouw-machine-ip>)" as DESK {
-  component "Browser\n(de app-UI)" as BROWSER
-  component "ArchSW-loc agent\n:5060 (token-auth)\n/disks /read-file /bind /unbind" as AGENT
-  component "usbipd-win\n(deelt USB via :3240)" as USBIPD
-  card "Externe archiefschijven\nExpansion (E:), Elements (F:)\nread-only bedoeld" as DISKS
-  DISKS --> AGENT : lokaal lezen
-  DISKS --> USBIPD : delen (USB/IP)
+node "Client machine (OPTIONAL, only for network-USB)" as DESK #line.dashed {
+  component "Browser\n(the app UI)" as BROWSER
+  component "Per-machine agent\n:5060 (token-auth)\n/disks /read-file /bind /unbind" as AGENT
+  component "USB/IP exporter\n(shares USB via :3240)\nusbipd-win / usbip" as USBIPD
+  card "External archive drives\n(read-only intended)" as DISKS
+  DISKS --> AGENT : read locally
+  DISKS --> USBIPD : share (USB/IP)
 }
 
-node "de indexeer-server - <server-ip> (server/brein)\nUbuntu + systemd: archive-search-workbench" as SERVER {
-  component "web_app.py (Flask :5059)\nzoeken - beheer - /api/remote/* - smart-serve" as APP
-  database "SQLite catalogus\n(metadata, ook offline doorzoekbaar)" as DB
+node "App host (any machine: laptop, server, or NAS)" as SERVER {
+  component "web_app.py (Flask :5059)\nsearch - manage - /api/remote/*" as APP
+  database "SQLite catalog\n(metadata, searchable offline)" as DB
   component "Recoll full-text index" as RECOLL
-  component "usbip_ctl.sh + vhci-hcd\n(importer)" as USBIP
-  component "mount_readonly.sh\n(ro + schrijfbeveiliging)" as MNT
+  component "USB/IP importer\nusbip_ctl.sh + vhci-hcd" as USBIP
+  component "Read-only mount\nmount_readonly.sh" as MNT
   APP --> DB
   APP --> RECOLL
   APP --> USBIP
   USBIP --> MNT
 }
 
-node "Synology NAS - <nas-ip>" as NAS {
-  component "Git bare repo\nindexer-exhdd-archive-search-workbench.git" as REPO
-  component "Mantis :5231\n(issues/bevindingen)" as MANTIS
-}
-cloud "pummelaar :5050\n(PlantUML render)" as PUML
-
 USER --> BROWSER
 BROWSER --> APP : HTTP :5059
-APP --> AGENT : /disks /read-file (token)  [bestand lokaal lezen]
-USBIP <--> USBIPD : USB/IP :3240  [schijf als /dev/sdX; voor indexeren]
-APP ..> PUML : diagrammen renderen
-APP ..> MANTIS : bevindingen
+APP --> AGENT : /disks /read-file (token) [read file locally]
+USBIP <--> USBIPD : USB/IP :3240 [drive as /dev/sdX; for indexing]
 
 note bottom of SERVER
-  Deploy-flow: lokaal committen -> git push naar NAS bare repo ->
-  op de server 'git pull' + 'systemctl restart archive-search-workbench'.
-  Poorten: 5059 web, 5060 agent, 3240 usbip, 5050 pummelaar, 5231 mantis.
+  Base case: run the app host and plug drives in directly -
+  no client machine needed. The client machine above is only
+  for the OPTIONAL network-USB mode.
+  Ports: 5059 web, 5060 agent, 3240 usbip.
 end note
 
 note right of DISKS
-  Read-only richting externe media (kernprincipe).
-  Identificatie op filesystem-UUID (volume-labels zijn niet uniek).
+  Read-only toward external media (core principle).
+  Identification by filesystem UUID (volume labels are not unique).
 end note
 @enduml
