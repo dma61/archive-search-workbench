@@ -63,6 +63,17 @@ cd archive-search-workbench
 .venv/bin/python web_app.py         # → http://localhost:5059
 ```
 
+### Docker
+
+Prefer containers? See **[DOCKER.md](DOCKER.md)** ([NL](DOCKER.nl.md)). There are two modes:
+a clean **web-only** container for searching an existing catalog, and a **full** (privileged,
+Linux host) container that can also mount drives, index, and use USB/IP.
+
+```bash
+docker compose --profile full up -d --build   # everything (Linux host)
+docker compose --profile web  up -d --build   # search-only (clean/unprivileged)
+```
+
 ## Two ways to use it
 
 ### Web interface (recommended)

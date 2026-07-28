@@ -62,6 +62,17 @@ cd archive-search-workbench
 .venv/bin/python web_app.py         # → http://localhost:5059
 ```
 
+### Docker
+
+Liever containers? Zie **[DOCKER.nl.md](DOCKER.nl.md)** ([EN](DOCKER.md)). Er zijn twee modi:
+een schone **web-only** container om een bestaande catalogus te doorzoeken, en een **full**
+(privileged, Linux-host) container die ook kan mounten, indexeren en USB/IP gebruiken.
+
+```bash
+docker compose --profile full up -d --build   # alles (Linux-host)
+docker compose --profile web  up -d --build   # alleen zoeken (schoon/onprivileged)
+```
+
 ## Twee manieren om het te gebruiken
 
 ### Webinterface (aanbevolen)

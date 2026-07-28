@@ -1,0 +1,40 @@
+# Archive Search Workbench — two run modes via Compose profiles.
+# See DOCKER.md for details and the honest limitations of each mode.
+#
+#   Full (Linux host, privileged — mount/index/USB/IP all work):
+#     docker compose --profile full up -d --build
+#
+#   Web-only (clean/unprivileged — search over an EXISTING catalog only):
+#     docker compose --profile web up -d --build
+
+services:
+  # --- FULL: end-to-end on a Linux host. Privileged + host network + host /dev.
+  # Can mount external drives, build indexes, and use USB/IP.
+  workbench-full:
+    profiles: ["full"]
+    build: .
+    image: archive-search-workbench:latest
+    privileged: true            # required for mount/umount of external media
+    network_mode: host          # USB/IP (3240) + reaching per-machine agents (5060)
+    volumes:
+      - ./data:/app/data
+      - ./recoll-indexes:/app/recoll-indexes
+      - ./config:/app/config
+      # The host ingest mountpoint, shared so mounts done inside are visible.
+      # Create it first on the host: sudo mkdir -p /mnt/archive-ingest
+      - /mnt/archive-ingest:/mnt/archive-ingest:rshared
+    restart: unless-stopped
+
+  # --- WEB-ONLY: clean, unprivileged. Serves the UI and searches an existing
+  # catalog/index. Mounting and indexing are NOT available in this mode.
+  workbench-web:
+    profiles: ["web"]
+    build: .
+    image: archive-search-workbench:latest
+    ports:
+      - "5059:5059"
+    volumes:
+      - ./data:/app/data
+      - ./recoll-indexes:/app/recoll-indexes:ro
+      - ./config:/app/config:ro
+    restart: unless-stopped

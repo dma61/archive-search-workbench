@@ -1,0 +1,30 @@
+# Keep the image lean and free of runtime/generated data and secrets.
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+*.pyo
+
+# Generated / runtime data (belongs in mounted volumes, not the image)
+data/
+recoll-indexes/
+logs/
+output/
+temp/
+*.db
+*.bak
+*.bak-*
+*.bak_*
+
+# Per-deployment config (mount config/ as a volume instead)
+config/remote_hosts.yaml
+
+# Release engine artifacts
+.releaser/
+
+# Editor / OS
+.claude/
+.DS_Store
+Thumbs.db
+*.swp

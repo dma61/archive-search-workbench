@@ -7,6 +7,19 @@ Dit project heeft (nog) geen formele semver-tags; onderstaande versies zijn func
 
 ## Nederlands
 
+### [1.0.0] — 2026-07-28 — Eerste publieke release
+**Toegevoegd**
+- **Publieke uitgave onder Apache-2.0** (+ `NOTICE` met behoud van de donatie-verwijzing).
+- **Tweetalige documentatie (EN/NL):** README, INSTALL-gids, en generieke Engelse
+  architectuur-/sequence-diagrammen (PUML + SVG).
+- **Docker:** `Dockerfile` + `docker-compose.yml` met twee modi (schone web-only en
+  volledige, privileged Linux-host) + `DOCKER.md`/`DOCKER.nl.md` incl. uitleg voor functionelen.
+- **AI-Handover** als startcontext voor coding-agents; README-sectie over mens-AI-samenwerking.
+
+**Gewijzigd**
+- Alle machine-/persoons-/netwerk-identifiers vervangen door generieke placeholders;
+  per-deployment host-config uit git (`config/remote_hosts.example.yaml` als sjabloon).
+
 ### [0.4] — 2026-07-24 — Netwerk-USB, agent & auto-koppelen
 **Toegevoegd**
 - **Netwerk-USB (USB/IP):** een archiefschijf aan een andere machine hangen en toch via de
@@ -42,6 +55,19 @@ interactief menu, stickerlabel-workflow.
 ---
 
 ## English
+
+### [1.0.0] — 2026-07-28 — First public release
+**Added**
+- **Public release under Apache-2.0** (+ `NOTICE` preserving the donation reference).
+- **Bilingual documentation (EN/NL):** README, INSTALL guide, and generic English
+  architecture/sequence diagrams (PUML + SVG).
+- **Docker:** `Dockerfile` + `docker-compose.yml` with two modes (clean web-only and a full,
+  privileged Linux-host mode) + `DOCKER.md`/`DOCKER.nl.md` including a plain-language section.
+- **AI handover** as start context for coding agents; README section on human–AI collaboration.
+
+**Changed**
+- All machine/person/network identifiers replaced with generic placeholders; per-deployment
+  host config removed from git (`config/remote_hosts.example.yaml` as a template).
 
 ### [0.4] — 2026-07-24 — Network-USB, agent & auto-attach
 **Added**
